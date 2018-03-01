@@ -44,8 +44,6 @@ ElseIf ($env:APPVEYOR_REPO_BRANCH.SubString(0,6) -eq "update") {
 	Copy-Item .\config\versions-update.props -Destination .\versions.props
 }
 
-dotnet restore
-
 # setup a local folder NuGet feed for use during the build
 mkdir $env:USERPROFILE\localfeed -Force
 nuget sources add -Name localfeed -Source $env:USERPROFILE\localfeed

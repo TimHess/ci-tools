@@ -3,6 +3,9 @@ cd src
 Get-ChildItem -Directory | ForEach-Object {
 	Write-Host "Now building $_..."
 	cd $_
+
+	dotnet restore
+
 	# if there is a tag with the latest commit don't include symbols or source
 	If ($env:APPVEYOR_REPO_TAG_NAME)
 	{
