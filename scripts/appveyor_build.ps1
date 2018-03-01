@@ -9,17 +9,19 @@ Get-ChildItem -Directory | ForEach-Object {
 	# if there is a tag with the latest commit don't include symbols or source
 	If ($env:APPVEYOR_REPO_TAG_NAME)
 	{
+		Write-Host "Creating package $_.$env:STEELTOE_VERSION$env:STEELTOE_DASH_VERSION_SUFFIX without symbols"
 		dotnet pack --configuration $env:BUILD_TYPE /p:Version=$env:STEELTOE_VERSION$env:STEELTOE_DASH_VERSION_SUFFIX
-		# send package to AppVeyor Account feed for use by other builds on their way out to nuget.org
-		appveyor PushArtifact bin\$env:BUILD_TYPE\$_.$env:STEELTOE_VERSION$env:STEELTOE_DASH_VERSION_SUFFIX.nupkg
 	}
 	Else
 	{
+		Write-Host "Creating package $_.$env:STEELTOE_VERSION$env:STEELTOE_DASH_VERSION_SUFFIX with symbols"
 		# include symbols and source
 		dotnet pack --configuration $env:BUILD_TYPE /p:Version=$env:STEELTOE_VERSION$env:STEELTOE_DASH_VERSION_SUFFIX --include-symbols --include-source
-		# send package to local feed for use within this build
-		nuget add bin\$env:BUILD_TYPE\$_.$env:STEELTOE_VERSION$env:STEELTOE_DASH_VERSION_SUFFIX.nupkg -Source "$env:USERPROFILE\localfeed"
 	}
+	# send package to local feed for use within this build
+	Write-Host "Adding package to local feed for use within this build..."
+	nuget add bin\$env:BUILD_TYPE\$_.$env:STEELTOE_VERSION$env:STEELTOE_DASH_VERSION_SUFFIX.nupkg -Source "$env:USERPROFILE\localfeed"
+
 	cd ..
 }
 cd ..
