@@ -2,7 +2,6 @@
 dotnet --info
 
 $env:CI_BUILD = $env:APPVEYOR
-$env:STEELTOE_VERSION = "0.0.1"
 Write-Host "NuGet package version to build: $env:STEELTOE_VERSION"
 
 $env:BUILD_TYPE = "Release"
