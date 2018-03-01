@@ -29,7 +29,8 @@ If ($env:APPVEYOR_REPO_TAG_NAME) {
 }
 ElseIf ($env:APPVEYOR_REPO_BRANCH -eq "master") {
 	Write-Host "Use dependencies from nuget.org and myget/master"
-	nuget sources add -Name SteeltoeMyGetMaster -Source https://www.myget.org/F/steeltoemaster/api/v3/index.json
+	nuget sources add -Name SteeltoeMyGetMaster -Source https://www.myget.org/F/oss-ci-master/api/v3/index.json
+	#nuget sources add -Name SteeltoeMyGetMaster -Source https://www.myget.org/F/steeltoemaster/api/v3/index.json
 	Copy-Item .\config\versions-master.props -Destination .\versions.props
 }
 ElseIf ($env:APPVEYOR_REPO_BRANCH -eq "dev") {
