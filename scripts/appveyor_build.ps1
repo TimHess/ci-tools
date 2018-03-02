@@ -1,6 +1,10 @@
 cd src
+If ($env:ProjectList -eq $null){
+	Write-Host "env:ProjectList was not defined - discover and build projects alphabetically"
+	$env:ProjectList = Get-ChildItem -Directory 
+}
 # build each project in the src folder
-Get-ChildItem -Directory | ForEach-Object {
+ForEach ($_ in $env:ProjectList.Split(' ')) {
 	Write-Host "Now building $_..."
 	cd $_
 
