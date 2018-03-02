@@ -1,9 +1,11 @@
-cd test
+Set-Location test
+
 # run tests in each project in the test folder
 Get-ChildItem -Directory | ForEach-Object {
-	cd $_.Name
+	Set-Location $_.Name
 	dotnet restore
 	dotnet xunit -verbose
-	cd ..
+	Set-Location ..
 }
-cd ..
+
+Set-Location ..

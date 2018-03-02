@@ -34,7 +34,8 @@ ElseIf ($env:APPVEYOR_REPO_BRANCH -eq "master") {
 }
 ElseIf ($env:APPVEYOR_REPO_BRANCH -eq "dev") {
 	Write-Host "Use dependencies from nuget.org and myget/dev"
-	nuget sources add -Name SteeltoeMyGetDev -Source https://www.myget.org/F/steeltoedev/api/v3/index.json
+	nuget sources add -Name SteeltoeMyGetDev -Source https://www.myget.org/F/oss-ci-dev/api/v3/index.json
+	#nuget sources add -Name SteeltoeMyGetDev -Source https://www.myget.org/F/steeltoedev/api/v3/index.json
 	Copy-Item .\config\versions-dev.props -Destination .\versions.props
 	$env:BUILD_TYPE = "Debug"
 }
