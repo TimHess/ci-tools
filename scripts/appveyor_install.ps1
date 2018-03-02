@@ -2,6 +2,7 @@
 dotnet --info
 
 $env:CI_BUILD = $env:APPVEYOR
+$env:STEELTOE_VERSION = $env:APPVEYOR_BUILD_VERSION.Replace("-$env:APPVEYOR_REPO_BRANCH-$env:APPVEYOR_BUILD_NUMBER", "")
 Write-Host "NuGet package version to build: $env:STEELTOE_VERSION"
 
 $env:BUILD_TYPE = "Release"
