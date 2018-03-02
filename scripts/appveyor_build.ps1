@@ -1,4 +1,4 @@
-cd src
+Set-Location src
 If ($env:ProjectList -eq $null){
 	Write-Host "env:ProjectList was not defined - discover and build projects alphabetically"
 	$env:ProjectList = Get-ChildItem -Directory 
@@ -6,7 +6,7 @@ If ($env:ProjectList -eq $null){
 # build each project in the src folder
 ForEach ($_ in $env:ProjectList.Split(' ')) {
 	Write-Host "Now building $_..."
-	cd $_
+	Set-Location $_
 
 	dotnet restore
 
@@ -26,6 +26,6 @@ ForEach ($_ in $env:ProjectList.Split(' ')) {
 	Write-Host "Adding package to local feed for use within this build..."
 	nuget add bin\$env:BUILD_TYPE\$_.$env:STEELTOE_VERSION$env:STEELTOE_DASH_VERSION_SUFFIX.nupkg -Source "$env:USERPROFILE\localfeed"
 
-	cd ..
+	Set-Location ..
 }
-cd ..
+Set-Location ..
