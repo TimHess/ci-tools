@@ -15,5 +15,5 @@ Set-Location ..
 
 If ($errors -gt 0)
 {
-    Throw "$errors tests have failed" 
+    Throw "$errors test(s) failed" 
 }

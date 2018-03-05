@@ -8,6 +8,7 @@ branches:
     - dev
     - /^update[0-9]{3}/
 install:
+  - git clone https://github.com/TimHess/ci-tools.git -v
   - ps: scripts\appveyor_install.ps1
 test_script:
   - ps: scripts\appveyor_tests.ps1
