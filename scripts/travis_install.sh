@@ -20,7 +20,7 @@ then
 	nuget sources add -Name SteeltoeMyGetDev -Source https://www.myget.org/F/oss-ci-dev/api/v3/index.json
 	#nuget sources add -Name SteeltoeMyGetDev -Source https://www.myget.org/F/steeltoedev/api/v3/index.json
     cp config/versions-dev.props ./versions.props
-elif [[ "${TRAVIS_BRANCH:0:3}" == "upd" ]]; 
+elif [[ "${TRAVIS_BRANCH:0:6}" == "update" ]]; 
 then 
 	echo "Use dependencies from nuget.org and myget/update"
 	nuget sources add -Name SteeltoeMyGetUpdates -Source https://www.myget.org/F/steeltoeupdates/api/v3/index.json
