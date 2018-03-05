@@ -7,10 +7,10 @@ Write-Host "NuGet package version to build: $env:STEELTOE_VERSION"
 
 $env:BUILD_TYPE = "Release"
 
-# if the last commit was tagged, don't use version suffixes
+# if the last commit was tagged, only use version suffixes from the tag itself
 If ($env:APPVEYOR_REPO_TAG_NAME) {
-	$env:STEELTOE_VERSION_SUFFIX = ""
-    $env:STEELTOE_DASH_VERSION_SUFFIX = ""
+	$env:STEELTOE_VERSION_SUFFIX = $env:APPVEYOR_REPO_TAG_NAME.split("-", 2)[1]
+	$env:STEELTOE_DASH_VERSION_SUFFIX = If ($env:STEELTOE_VERSION_SUFFIX) { "-$env:STEELTOE_VERSION_SUFFIX" }
 }
 Else {
 	# use this variable to set the version on packages
