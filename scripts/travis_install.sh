@@ -3,7 +3,6 @@
 dotnet --info
 
 export CI_BUILD=True
-export STEELTOE_VERSION=2.1.0
 if [[ "$TRAVIS_TAG" != "" ]]; 
 then 
 	echo "Use dependencies from nuget.org only"
