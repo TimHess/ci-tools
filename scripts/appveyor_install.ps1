@@ -25,26 +25,30 @@ Write-Host "Package version suffix to use: $env:STEELTOE_VERSION_SUFFIX"
 If ($env:APPVEYOR_REPO_TAG_NAME) {
 	Write-Host "Use dependencies from nuget.org only"
 	nuget sources add -Name SteeltoeMyGetStaging -Source https://www.myget.org/F/oss-ci/api/v3/index.json
-	Copy-Item .\config\versions.props -Destination .\versions.props
 }
 ElseIf ($env:APPVEYOR_REPO_BRANCH -eq "master") {
 	Write-Host "Use dependencies from nuget.org and myget/master"
 	nuget sources add -Name SteeltoeMyGetMaster -Source https://www.myget.org/F/oss-ci-master/api/v3/index.json
 	#nuget sources add -Name SteeltoeMyGetMaster -Source https://www.myget.org/F/steeltoemaster/api/v3/index.json
-	Copy-Item .\config\versions-master.props -Destination .\versions.props
+	$env:PropsVersion = "-master"
 }
 ElseIf ($env:APPVEYOR_REPO_BRANCH -eq "dev") {
 	Write-Host "Use dependencies from nuget.org and myget/dev"
 	nuget sources add -Name SteeltoeMyGetDev -Source https://www.myget.org/F/oss-ci-dev/api/v3/index.json
 	#nuget sources add -Name SteeltoeMyGetDev -Source https://www.myget.org/F/steeltoedev/api/v3/index.json
-	Copy-Item .\config\versions-dev.props -Destination .\versions.props
+	$env:PropsVersion = "-dev"
 	$env:BUILD_TYPE = "Debug"
 }
 ElseIf ($env:APPVEYOR_REPO_BRANCH.SubString(0,6) -eq "update") {
 	Write-Host "Use dependencies from nuget.org and myget/update"
 	nuget sources add -Name SteeltoeMyGetUpdates -Source https://www.myget.org/F/steeltoeupdates/api/v3/index.json
-	Copy-Item .\config\versions-update.props -Destination .\versions.props
+	$env:PropsVersion = "-update"
 }
+If (Test-Path config/versions.props)
+{
+	Copy-Item .\config\versions$env:PropsVersion.props -Destination .\versions.props	
+}
+
 
 # setup a local folder NuGet feed for use during the build
 mkdir $env:USERPROFILE\localfeed -Force

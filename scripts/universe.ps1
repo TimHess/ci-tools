@@ -1,8 +1,6 @@
 Param(
     [Parameter(Mandatory=$true)]
-    [string]$Steeltoe_Version_To_Build,
-    [string]$BuildType,
-    [string]$RepositoryList
+    [string]$Steeltoe_Version_To_Build
  )
 
 # Validate/set initial parameters
@@ -10,6 +8,7 @@ $env:STEELTOE_VERSION = $Steeltoe_Version_To_Build.Split("-")[0]
 # Steeltoe version should be 5+ characters and include 2 periods
 If ($env:STEELTOE_VERSION.length -lt 5 -or ($env:STEELTOE_VERSION.ToCharArray() | Where-Object {$_ -eq '.'} | Measure-Object).Count -ne 2) {
     Write-Error "Please use a version format of 1.2.3"
+    return -1
 }
 If ($Steeltoe_Version_To_Build.Split("-")[1]) {
     $env:STEELTOE_VERSION_SUFFIX = $Steeltoe_Version_To_Build.Split("-")[1]
@@ -28,18 +27,15 @@ If (-Not $BuildType) {
     $env:BUILD_TYPE = "Release"
     $env:BranchFilter = "--single-branch -b master"
 }
-If (-Not $RepositoryList) {
-    Write-Information "Steeltoe repository list not set in Environment, using complete list"
-    $s = "SteeltoeOSS"
-    $p = "pivotal-cf"
-    $env:SteeltoeRepositoryList = "$s/Common $s/Configuration $p/spring-cloud-dotnet-configuration $s/logging $s/connectors " + 
-                                        "$s/discovery $p/spring-cloud-dotnet-discovery $s/security $s/management $s/circuitbreaker"
-}
 Else {
-    Write-Information "Using repository list passed in: $RepositoryList"
-    $env:SteeltoeRepositoryList = $RepositoryList
+    $env:BUILD_TYPE = $BuildType
+    $env:BranchFilter = ""
 }
-
+If (-Not $env:SteeltoeRepositoryList) {
+    Write-Information "Steeltoe repository list not set in Environment, using complete list"
+    $s = "TimHess"
+    $env:SteeltoeRepositoryList = "$s/base-ci-lib $s/dependent-ci-lib"
+}
 # start the clock
 $TotalTime = New-Object -TypeName System.Diagnostics.Stopwatch
 $TotalTime.Start()
@@ -53,7 +49,7 @@ Remove-Item workspace -Force -Recurse -ErrorAction SilentlyContinue
 [int]$env:TestErrors = 0
 $env:ProcessTimes = ""
 
-mkdir workspace
+mkdir workspace -Force
 Set-Location workspace
 
 ForEach ($_ in $env:SteeltoeRepositoryList.Split(' ')) {
@@ -65,18 +61,20 @@ ForEach ($_ in $env:SteeltoeRepositoryList.Split(' ')) {
     Invoke-Expression $cloneString
 
     Set-Location $_.Split("/")[1]
-    Copy-Item config/versions.props versions.props
-    # modify versions.props (xml) to update all steeltoe references (except SteeltoeVersion and SteeltoeVersionSuffix)
-    $xmlContent = [XML](Get-Content("versions.props"))
-    $xmlContent.SelectNodes("//Project/PropertyGroup/*[starts-with(local-name(), 'Steeltoe')]") | 
-      Where-Object {$_.name -ne "SteeltoeVersion" -and $_.name -ne "SteeltoeVersionSuffix"} | 
-      ForEach-Object {
-        Write-Host "Original value of"$_.Name"is"$_.InnerXml
-        $_.InnerXml = $env:STEELTOE_VERSION + $env:STEELTOE_DASH_VERSION_SUFFIX
-        Write-Host "Updated value of"$_.Name"is"$_.InnerXml
+    If (Test-Path config/versions.props)
+    {
+        Copy-Item config/versions.props versions.props
+        # modify versions.props (xml) to update all steeltoe references (except SteeltoeVersion and SteeltoeVersionSuffix)
+        $xmlContent = [XML](Get-Content("versions.props"))
+        $xmlContent.SelectNodes("//Project/PropertyGroup/*[starts-with(local-name(), 'Steeltoe')]") | 
+        Where-Object {$_.name -ne "SteeltoeVersion" -and $_.name -ne "SteeltoeVersionSuffix"} | 
+        ForEach-Object {
+            Write-Host "Original value of"$_.Name"is"$_.InnerXml
+            $_.InnerXml = $env:STEELTOE_VERSION + $env:STEELTOE_DASH_VERSION_SUFFIX
+            Write-Host "Updated value of"$_.Name"is"$_.InnerXml
+        }
+        $xmlContent.OuterXml | Out-File "versions.props"
     }
-    $xmlContent.OuterXml | Out-File "versions.props"
-
     dotnet build --configuration $env:BUILD_TYPE
     Write-Host "Exit code: "$LastExitCode
     # not sure this is working
@@ -120,6 +118,7 @@ Set-Location ..
 nuget sources remove -Name artifacts
 
 # display processing times
+Write-Host "Package build process times:"
 ForEach ($_ in $env:ProcessTimes.Split(';')) { 
     Write-Host $_ 
 }
