@@ -22,25 +22,19 @@ Else {
 Write-Host "Package version suffix to use: $env:STEELTOE_VERSION_SUFFIX"
 
 # add MyGet server as required, copy versions.props to solution root for use later
-If ($env:APPVEYOR_REPO_TAG_NAME) {
-	Write-Host "Use dependencies from nuget.org only"
-	nuget sources add -Name SteeltoeMyGetStaging -Source https://www.myget.org/F/oss-ci/api/v3/index.json
-}
-ElseIf ($env:APPVEYOR_REPO_BRANCH -eq "master") {
-	Write-Host "Use dependencies from nuget.org and myget/master"
+If ($env:APPVEYOR_REPO_BRANCH -eq "master") {
+	Write-Host "Use dependencies from nuget.org and https://www.myget.org/F/oss-ci-master/api/v3/index.json"
 	nuget sources add -Name SteeltoeMyGetMaster -Source https://www.myget.org/F/oss-ci-master/api/v3/index.json
-	#nuget sources add -Name SteeltoeMyGetMaster -Source https://www.myget.org/F/steeltoemaster/api/v3/index.json
 	$env:PropsVersion = "-master"
 }
 ElseIf ($env:APPVEYOR_REPO_BRANCH -eq "dev") {
-	Write-Host "Use dependencies from nuget.org and myget/dev"
+	Write-Host "Use dependencies from nuget.org and https://www.myget.org/F/oss-ci-dev/api/v3/index.json"
 	nuget sources add -Name SteeltoeMyGetDev -Source https://www.myget.org/F/oss-ci-dev/api/v3/index.json
-	#nuget sources add -Name SteeltoeMyGetDev -Source https://www.myget.org/F/steeltoedev/api/v3/index.json
 	$env:PropsVersion = "-dev"
 	$env:BUILD_TYPE = "Debug"
 }
 ElseIf ($env:APPVEYOR_REPO_BRANCH.SubString(0,6) -eq "update") {
-	Write-Host "Use dependencies from nuget.org and myget/update"
+	Write-Host "Use dependencies from nuget.org and https://www.myget.org/F/steeltoeupdates/api/v3/index.json"
 	nuget sources add -Name SteeltoeMyGetUpdates -Source https://www.myget.org/F/steeltoeupdates/api/v3/index.json
 	$env:PropsVersion = "-update"
 }

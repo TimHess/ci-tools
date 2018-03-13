@@ -3,11 +3,7 @@
 dotnet --info
 
 export CI_BUILD=True
-if [[ "$TRAVIS_TAG" != "" ]]; 
-then 
-	echo "Use dependencies from nuget.org only"
-	nuget sources add -Name SteeltoeMyGetStaging -Source https://www.myget.org/F/oss-ci/api/v3/index.json
-elif [[ "$TRAVIS_BRANCH" == "master" ]]; 
+if [[ "$TRAVIS_BRANCH" == "master" ]]; 
 then 
 	echo "Use dependencies from nuget.org and myget/master"
 	nuget sources add -Name SteeltoeMyGetMaster -Source https://www.myget.org/F/oss-ci-master/api/v3/index.json
