@@ -1,23 +1,15 @@
-Param(
-    [Parameter]
-    [string]$Version_To_Set
-)
-
 If (-Not $env:PackageReferencesToUpdate) {
     Write-Host "No depency updates requested"
     Write-Host "To use, set env:PackageReferencesToUpdate to a space-separated list of properties to update in dependent libraries"
     return
 }
 
-If (-Not $Version_To_Set)
+If (-Not $env:STEELTOE_VERSION) 
 {
-    If (-Not $env:STEELTOE_VERSION) 
-    {
-        Write-Error "Downstream references identifed but version wasn't set explicitly or implicitly!"
-        return -1
-    }
-    $Version_To_Set = $env:STEELTOE_VERSION + $env:STEELTOE_DASH_VERSION_SUFFIX
+    Write-Error "Downstream references identifed but version wasn't set explicitly or implicitly!"
+    return -1
 }
+$Version_To_Set = $env:STEELTOE_VERSION + $env:STEELTOE_DASH_VERSION_SUFFIX
 
 
 If (-Not $env:SteeltoeRepositoryList) {
