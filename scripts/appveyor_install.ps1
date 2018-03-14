@@ -45,6 +45,5 @@ If (Test-Path config/versions.props)
 
 
 # setup a local folder NuGet feed for use during the build
-$path = $MyInvocation.MyCommand.Path
-mkdir localfeed -Force
-nuget sources add -Name localfeed -Source $path/localfeed
+mkdir $env:APPVEYOR_BUILD_FOLDER\localfeed -Force
+nuget sources add -Name localfeed -Source $env:APPVEYOR_BUILD_FOLDER\localfeed
