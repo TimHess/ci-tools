@@ -47,3 +47,4 @@ If (Test-Path config/versions.props)
 # setup a local folder NuGet feed for use during the build
 mkdir localfeed -Force
 nuget sources add -Name localfeed -Source localfeed
+nuget sources list
