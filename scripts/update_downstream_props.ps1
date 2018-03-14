@@ -16,7 +16,7 @@ If (-Not $Version_To_Set)
         Write-Error "Downstream references identifed but version wasn't set explicitly or implicitly!"
         return -1
     }
-    $Version_To_Set = "$env:STEELTOE_VERSION$env:STEELTOE_DASH_VERSION_SUFFIX"
+    $Version_To_Set = $env:STEELTOE_VERSION + $env:STEELTOE_DASH_VERSION_SUFFIX
 }
 
 
