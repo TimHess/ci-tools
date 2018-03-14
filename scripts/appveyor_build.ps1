@@ -14,18 +14,14 @@ ForEach ($_ in $env:ProjectList.Split(' ')) {
 	If ($env:APPVEYOR_REPO_TAG_NAME)
 	{
 		Write-Host "Creating package $_.$env:STEELTOE_VERSION$env:STEELTOE_DASH_VERSION_SUFFIX without symbols"
-		dotnet pack --configuration $env:BUILD_TYPE /p:Version=$env:STEELTOE_VERSION$env:STEELTOE_DASH_VERSION_SUFFIX
+		dotnet pack --configuration $env:BUILD_TYPE /p:Version=$env:STEELTOE_VERSION$env:STEELTOE_DASH_VERSION_SUFFIX -o ..\..\localfeed
 	}
 	Else
 	{
 		Write-Host "Creating package $_.$env:STEELTOE_VERSION$env:STEELTOE_DASH_VERSION_SUFFIX with symbols"
 		# include symbols and source
-		dotnet pack --configuration $env:BUILD_TYPE /p:Version=$env:STEELTOE_VERSION$env:STEELTOE_DASH_VERSION_SUFFIX --include-symbols --include-source
+		dotnet pack --configuration $env:BUILD_TYPE /p:Version=$env:STEELTOE_VERSION$env:STEELTOE_DASH_VERSION_SUFFIX --include-symbols --include-source -o ..\..\localfeed
 	}
-	# send package to local feed for use within this build
-	Write-Host "Adding package to local feed for use within this build..."
-	nuget add bin\$env:BUILD_TYPE\$_.$env:STEELTOE_VERSION$env:STEELTOE_DASH_VERSION_SUFFIX.nupkg -Source localfeed
-
 	Set-Location ..
 }
 Set-Location ..
