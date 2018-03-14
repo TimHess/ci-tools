@@ -56,7 +56,7 @@ ForEach ($_ in $env:SteeltoeRepositoryList.Split(' ')) {
     $ProjectTime = New-Object -TypeName System.Diagnostics.Stopwatch
     $ProjectTime.Start()
     # build the clone command as a string to then execute so the branch filter works
-    $cloneString = "git clone $env:BranchFilter https://github.com/$_.git"
+    $cloneString = "git clone -q $env:BranchFilter https://github.com/$_.git"
     Write-Host "clone command: " $cloneString
     Invoke-Expression $cloneString
 
