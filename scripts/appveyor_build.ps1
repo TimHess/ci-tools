@@ -24,7 +24,7 @@ ForEach ($_ in $env:ProjectList.Split(' ')) {
 	}
 	# send package to local feed for use within this build
 	Write-Host "Adding package to local feed for use within this build..."
-	nuget add bin\$env:BUILD_TYPE\$_.$env:STEELTOE_VERSION$env:STEELTOE_DASH_VERSION_SUFFIX.nupkg -Source "$env:USERPROFILE\localfeed"
+	nuget add bin\$env:BUILD_TYPE\$_.$env:STEELTOE_VERSION$env:STEELTOE_DASH_VERSION_SUFFIX.nupkg -Source localfeed
 
 	Set-Location ..
 }
