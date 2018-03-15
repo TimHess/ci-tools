@@ -1,6 +1,6 @@
-If ($env:APPVEYOR_REPO_BRANCH -ne "dev")
+If ($env:APPVEYOR_REPO_BRANCH -ne "dev" -and $env:APPVEYOR_REPO_BRANCH -ne "master")
 {
-    Write-Host "Dependency updates are only available for the dev branch"
+    Write-Host "Dependency updates are only available for the dev and master branches"
     return
 }
 
@@ -25,7 +25,7 @@ If (-Not $env:SteeltoeRepositoryList) {
 }
 
 # specifically checkout dev branches in case one get master set as default at some point
-$env:BranchFilter = "--single-branch -b dev"
+$env:BranchFilter = "--single-branch -b $env:APPVEYOR_REPO_BRANCH"
 
 # start the clock
 $TotalTime = New-Object -TypeName System.Diagnostics.Stopwatch
@@ -48,13 +48,13 @@ ForEach ($_ in $env:SteeltoeRepositoryList.Split(' ')) {
     Invoke-Expression $cloneString
 
     Set-Location $_.Split("/")[1]
-    If (Test-Path config/versions-dev.props)
+    If (Test-Path config/versions-$env:APPVEYOR_REPO_BRANCH.props)
     {
         $updatedSomething = $false
         # modify versions.props (xml) to update all steeltoe references (except SteeltoeVersion and SteeltoeVersionSuffix)
         $xmlContent = New-Object System.Xml.XmlDocument
         $xmlContent.PreserveWhitespace = $true
-        $xmlContent.Load("$pwd/config/versions-dev.props")
+        $xmlContent.Load("$pwd/config/versions-$env:APPVEYOR_REPO_BRANCH.props")
         $xmlContent.SelectNodes("//Project/PropertyGroup/*") | 
         ForEach-Object {
             If ($env:PackageReferencesToUpdate.Contains($_.name))
@@ -68,15 +68,15 @@ ForEach ($_ in $env:SteeltoeRepositoryList.Split(' ')) {
         if ($updatedSomething)
         {
             Write-Host "Dependencies were updated, commit and push the changes!"
-            $xmlContent.OuterXml | Out-File "config/versions-dev.props"
-            git add config/versions-dev.props
-            git commit -m "Update versions-dev.props"
+            $xmlContent.OuterXml | Out-File "config/versions-$env:APPVEYOR_REPO_BRANCH.props"
+            git add config/versions-$env:APPVEYOR_REPO_BRANCH.props
+            git commit -m "Update versions-$env:APPVEYOR_REPO_BRANCH.props"
             git push --porcelain
         }
     }
     Else 
     {
-        Write-Host "config/versions-dev.props not found"
+        Write-Host "config/versions-$env:APPVEYOR_REPO_BRANCH.props not found"
     }
     Set-Location ..
     $ProjectTime.Stop()
