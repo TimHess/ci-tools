@@ -3,7 +3,7 @@
 # Run unit tests
 for d in ./test/*; do
     cd $d
-    dotnet restore
+    dotnet restore $NuGetConfigSwitch
     dotnet xunit -verbose -framework netcoreapp2.0
     cd ../../
 done
