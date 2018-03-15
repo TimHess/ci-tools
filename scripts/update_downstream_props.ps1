@@ -44,6 +44,7 @@ ForEach ($_ in $env:SteeltoeRepositoryList.Split(' ')) {
     Set-Location $_.Split("/")[1]
     If (Test-Path config/versions-dev.props)
     {
+        $updatedSomething = $false
         # modify versions.props (xml) to update all steeltoe references (except SteeltoeVersion and SteeltoeVersionSuffix)
         $xmlContent = [XML](Get-Content("config/versions-dev.props"))
         $xmlContent.SelectNodes("//Project/PropertyGroup/*") | 
@@ -53,9 +54,21 @@ ForEach ($_ in $env:SteeltoeRepositoryList.Split(' ')) {
                 Write-Host "Original value of"$_.Name"is"$_.InnerXml
                 $_.InnerXml = $Version_To_Set
                 Write-Host "Updated value of"$_.Name"is"$_.InnerXml
+                $updatedSomething = $true
             }
         }
-        $xmlContent.OuterXml | Out-File "config/versions-dev.props"
+        if ($updatedSomething)
+        {
+            Write-Host "Dependencies were updated, commit and push the changes!"
+            $xmlContent.OuterXml | Out-File "config/versions-dev.props"
+            git add config/versions-dev.props
+            git commit -m "Update versions-dev.props"
+            git push
+        }
+    }
+    Else 
+    {
+        Write-Host "config/versions-dev.props not found"
     }
     Set-Location ..
     $ProjectTime.Stop()
