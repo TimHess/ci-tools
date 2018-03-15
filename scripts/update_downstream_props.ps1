@@ -47,6 +47,7 @@ ForEach ($_ in $env:SteeltoeRepositoryList.Split(' ')) {
         $updatedSomething = $false
         # modify versions.props (xml) to update all steeltoe references (except SteeltoeVersion and SteeltoeVersionSuffix)
         $xmlContent = [XML](Get-Content("config/versions-dev.props"))
+        $xmlContent.PreserveWhitespace = $true
         $xmlContent.SelectNodes("//Project/PropertyGroup/*") | 
         ForEach-Object {
             If ($env:PackageReferencesToUpdate.Contains($_.name))
@@ -63,7 +64,7 @@ ForEach ($_ in $env:SteeltoeRepositoryList.Split(' ')) {
             $xmlContent.OuterXml | Out-File "config/versions-dev.props"
             git add config/versions-dev.props
             git commit -m "Update versions-dev.props"
-            git push
+            git push --porcelain
         }
     }
     Else 
