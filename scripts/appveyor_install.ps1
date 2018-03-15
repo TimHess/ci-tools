@@ -40,6 +40,7 @@ ElseIf ($env:APPVEYOR_REPO_BRANCH.SubString(0,6) -eq "update") {
 }
 If (Test-Path config/versions.props)
 {
+	Write-Host "Using .\config\versions$env:PropsVersion.props"	
 	Copy-Item .\config\versions$env:PropsVersion.props -Destination .\versions.props	
 }
 
