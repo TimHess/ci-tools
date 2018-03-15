@@ -1,3 +1,9 @@
+If ($env:APPVEYOR_REPO_BRANCH -ne "dev")
+{
+    Write-Host "Dependency updates are only available for the dev branch"
+    return
+}
+
 If (-Not $env:PackageReferencesToUpdate) {
     Write-Host "No depency updates requested"
     Write-Host "To use, set env:PackageReferencesToUpdate to a space-separated list of properties to update in dependent libraries"
