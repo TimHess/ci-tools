@@ -48,7 +48,7 @@ ForEach ($_ in $env:SteeltoeRepositoryList.Split(' ')) {
         # modify versions.props (xml) to update all steeltoe references (except SteeltoeVersion and SteeltoeVersionSuffix)
         $xmlContent = New-Object System.Xml.XmlDocument
         $xmlContent.PreserveWhitespace = $true
-        $xmlContent.Load("config/versions-dev.props")
+        $xmlContent.Load("$pwd/config/versions-dev.props")
         $xmlContent.SelectNodes("//Project/PropertyGroup/*") | 
         ForEach-Object {
             If ($env:PackageReferencesToUpdate.Contains($_.name))
