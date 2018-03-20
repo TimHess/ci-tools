@@ -86,7 +86,7 @@ ForEach ($_ in $env:SteeltoeRepositoryList.Split(' ')) {
 Set-Location ..
 
 # display processing times
-Write-Host "Package build process times:"
+Write-Host "Individual process times:"
 ForEach ($_ in $env:ProcessTimes.Split(';')) { 
     Write-Host $_ 
 }
